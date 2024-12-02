@@ -1,18 +1,19 @@
 ﻿using System.Reflection;
 using src.Solutions;
+using src.Solutions.Day1;
+using src.Solutions.Day2;
 
 while (true)
 {
     // Get all the solutions
-    var solutions = Assembly.GetExecutingAssembly().DefinedTypes
-        .Where(x => x.IsAssignableTo(typeof(Solutions)) && x.Name != "Solutions")
-        .Select(x => (Solutions)x.GetConstructor(new Type[0]).Invoke(new object[0]));
+    Solutions[] solutions = { new Day1(), new Day2() };
+    var possibleDays = solutions.Select(x => x.DayNumber).ToArray();
     
     // Get input from user
-    Console.WriteLine("Enter the day to execute:");
+    Console.WriteLine($"Enter the day to execute, possible input '{string.Join(", ", possibleDays)}':");
     var userInput = Console.ReadLine();
     int.TryParse(userInput, out int day);
-    if (day == 0 || solutions.Any(x => x.DayNumber != day))
+    if (day == 0 || !possibleDays.Contains(day))
     {
         Console.WriteLine($"Please enter a valid day. Day '{day}' is not valid.");
         continue;
@@ -23,9 +24,6 @@ while (true)
     
     // Execute chosen day
     Console.WriteLine($"----Running day: '{day}' ----");
-    Console.WriteLine("Example");
-    dayToRun.RunExample();
-    Console.WriteLine();
     Console.WriteLine("Input");
     dayToRun.Run();
     Console.WriteLine();

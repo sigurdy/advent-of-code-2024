@@ -12,13 +12,13 @@ public abstract class Solutions
     {
         DayNumber = dayNumber;
         
-        var filePath = $"../../../../src/Solutions/Day{DayNumber}/input.txt";
+        var filePath = $"./Solutions/Day{DayNumber}/input.txt";
         InputLines = (File.Exists(filePath)) ? File.ReadAllLines(filePath) : throw new InvalidOperationException($"File not found: {filePath}");
         
-        var filePathPart1 = $"../../../../src/Solutions/Day{DayNumber}/Example/part1.txt";
+        var filePathPart1 = $"./Solutions/Day{DayNumber}/Example/part1.txt";
         Part1ExampleLines = (File.Exists(filePathPart1)) ? File.ReadAllLines(filePathPart1) : null;
         
-        var filePathPart2 = $"../../../../src/Solutions/Day{DayNumber}/Example/part2.txt";
+        var filePathPart2 = $"./Solutions/Day{DayNumber}/Example/part2.txt";
         Part2ExampleLines = (File.Exists(filePathPart2)) ? File.ReadAllLines(filePathPart2) : null;
     }
 
