@@ -38,6 +38,8 @@ public class Day2 : Solutions
         }
         return true;
     }
+    
+    // TODO: Create a method to remove each element at a time for a given FAULTY line.
 
     private bool IsSafeLine(string line, bool damp = false)
     {
