@@ -9,20 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Solutions\Day2\Example\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Solutions\**\Example\*.txt">
+    <None Update="Solutions\**\*.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Solutions\**\input.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-	
 
 </Project>

@@ -10,7 +10,7 @@ public class Day1Tests
     {
         // Arrange
         var sut = new Day1();
-        var filePath = $"./Solutions/Day{sut.DayNumber}/Example/part1.txt";
+        var filePath = $"./Solutions/Day{sut.DayNumber}/example.txt";
         var inputLines = (File.Exists(filePath)) ? File.ReadAllLines(filePath) : throw new InvalidOperationException("File not found");
         
         // Act
@@ -25,7 +25,7 @@ public class Day1Tests
     {
         // Arrange
         var sut = new Day1();
-        var filePath = $"./Solutions/Day{sut.DayNumber}/Example/part2.txt";
+        var filePath = $"./Solutions/Day{sut.DayNumber}/example.txt";
         var inputLines = (File.Exists(filePath)) ? File.ReadAllLines(filePath) : throw new InvalidOperationException("File not found");
         
         // Act
