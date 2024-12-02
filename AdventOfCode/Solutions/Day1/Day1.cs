@@ -1,4 +1,4 @@
-namespace src.Solutions.Day1;
+namespace AdventOfCode.Solutions.Day1;
 
 public class Day1 : Solutions
 {

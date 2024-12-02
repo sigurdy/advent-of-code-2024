@@ -1,4 +1,4 @@
-namespace src.Solutions;
+namespace AdventOfCode.Solutions;
 
 public abstract class Solutions
 {

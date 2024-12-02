@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace src.Solutions.Day2;
+﻿namespace AdventOfCode.Solutions.Day2;
 
 public class Day2 : Solutions
 {
@@ -10,10 +8,11 @@ public class Day2 : Solutions
 
     public override void Run()
     {
-        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
+        //Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
+        Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
     }
 
-    private bool ChecIfNumberIncreaseCorrect(int number1, int number2)
+    private bool IsNumberIncreaseCorrect(int number1, int number2)
     {
         int distance = Math.Abs(number1 - number2);
 
@@ -21,56 +20,66 @@ public class Day2 : Solutions
         return false;
     }
 
-    private bool IsIncreasing(int currentNumber, int previousNumber)
+    private bool IsNumberIncreasing(int currentNumber, int previousNumber)
     {
-        return (currentNumber > previousNumber) ? true : false;
+        return (currentNumber > previousNumber);
     }
 
     private bool IsCorrectNumber(int currentNumber, int previousNumber, bool increasing)
     {
-        if (increasing != IsIncreasing(currentNumber, previousNumber))
+        if (increasing != IsNumberIncreasing(currentNumber, previousNumber))
         {
             return false;
         }
 
-        if (!ChecIfNumberIncreaseCorrect(previousNumber, currentNumber))
+        if (!IsNumberIncreaseCorrect(previousNumber, currentNumber))
         {
             return false;
         }
         return true;
     }
 
-    private bool IsSafeLine(string line)
+    private bool IsSafeLine(string line, bool damp = false)
     {
-        var numbers = line.Split(' ');
-        bool isSafe = true;
-
+        var numbers = line.Split(' ').Select(int.Parse).ToArray();
+        bool isIncreasing = IsNumberIncreasing(numbers.Last(), numbers.First());
+        
+        bool isSafe = false;
         int previousNumber = 0;
-        bool isIncreasing = true;
-
+        bool usedDamp = false;
+        
         for (int i = 0; i < numbers.Length; i++)
         {
-            var currentNumber = int.Parse(numbers[i].ToString());
+            var currentNumber = numbers[i];
 
             if (i == 0)
             {
                 previousNumber = currentNumber;
                 continue;
             }
-            else if (i == 1)
-            {
-                isIncreasing = IsIncreasing(currentNumber, previousNumber);
-            }
 
             if (!IsCorrectNumber(currentNumber, previousNumber, isIncreasing))
             {
+                if (damp && !usedDamp)
+                {
+                    if (i == numbers.Length - 1)
+                    {
+                        isSafe = true;
+                        continue;
+                    }
+                    usedDamp = true;
+                    continue;
+                }
+
                 isSafe = false;
                 break;
             }
-            
+            isSafe = true;
             previousNumber = currentNumber;
         }
-        return isSafe ? true : false;
+
+        if (!isSafe) Console.WriteLine($"Problem: {line}");
+        return isSafe;
     }
 
     public override int RunPart1(string[] inputLines)
@@ -91,7 +100,7 @@ public class Day2 : Solutions
 
         foreach (var line in inputLines)
         {
-            if (IsSafeLine(line, )) numberOfSafeLevels += 1;
+            if (IsSafeLine(line, damp: true)) numberOfSafeLevels += 1;
         }
 
         return numberOfSafeLevels;

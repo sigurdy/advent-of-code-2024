@@ -1,7 +1,6 @@
-﻿using System.Reflection;
-using src.Solutions;
-using src.Solutions.Day1;
-using src.Solutions.Day2;
+﻿using AdventOfCode.Solutions;
+using AdventOfCode.Solutions.Day1;
+using AdventOfCode.Solutions.Day2;
 
 while (true)
 {
