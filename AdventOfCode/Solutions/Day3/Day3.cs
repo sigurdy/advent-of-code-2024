@@ -16,8 +16,8 @@ public class Day3 : Solutions
 
     private List<(int, int)> ExtractValidMults(string input)
     {
-        var regExPattern = @"mul\(\d{1,3},\d{1,3}\)";
-        var matches = Regex.Matches(input, regExPattern);
+        var regExPatternOnlyMults = @"mul\(\d{1,3},\d{1,3}\)";
+        var matches = Regex.Matches(input, regExPatternOnlyMults);
 
         List<(int, int)> items = [];
         foreach (Match match in matches) 
@@ -34,6 +34,39 @@ public class Day3 : Solutions
         return items;
     }
 
+    private List<(int, int)> ExtractValidDosAndDonts(string input)
+    {
+        var regExPatternOnlyMults = @"mul\(\d{1,3},\d{1,3}\)|do\(\)|don't\(\)";
+        var matches = Regex.Matches(input, regExPatternOnlyMults);
+
+        bool enableCalculation = true;
+        List<(int, int)> items = [];
+        foreach (Match match in matches)
+        {
+            var value = match.Value;
+
+            if (value == "do()")
+            {
+                enableCalculation = true;
+                continue;
+            }
+            else if (value == "don't()")
+            {
+                enableCalculation = false;
+                continue;
+            }
+
+            if (enableCalculation)
+            {
+                var number = Regex.Matches(value, @"\d{1,3}");
+                if (number.Count != 2) throw new InvalidOperationException($"Expected only 2 numbers. Found {number.Count}");
+                items.Add((int.Parse(number.First().Value), int.Parse(number.Last().Value)));
+            }
+        }
+
+        return items;
+    }
+
     private int CalculateMults(string inputString)
     {
         var validMults = ExtractValidMults(inputString);
@@ -42,8 +75,19 @@ public class Day3 : Solutions
         foreach (var mult in validMults)
         {
             sum += mult.Item1 * mult.Item2;
-            //Console.WriteLine($"Calculating: {mult.Item1} * {mult.Item2} = {mult.Item1 * mult.Item2}");
-            //Console.WriteLine($"New sum = {sum}");
+        }
+
+        return sum;
+    }
+
+    private int CalculateMultsDoAndDont(string inputString)
+    {
+        var validMults = ExtractValidDosAndDonts(inputString);
+
+        var sum = 0;
+        foreach (var mult in validMults)
+        {
+            sum += mult.Item1 * mult.Item2;
         }
 
         return sum;
@@ -67,7 +111,7 @@ public class Day3 : Solutions
         {
             combinedString += line;
         }
-        int result = CalculateMults(combinedString);
+        int result = CalculateMultsDoAndDont(combinedString);
         return result;
     }
 }
