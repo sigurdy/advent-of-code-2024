@@ -8,7 +8,7 @@ public class Day2 : Solutions
 
     public override void Run()
     {
-        //Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
+        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
         Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
     }
 
@@ -20,91 +20,77 @@ public class Day2 : Solutions
         return false;
     }
 
-    private bool IsNumberIncreasing(int currentNumber, int previousNumber)
+    private int GetNumberOfSafeLine(string[] lines, bool damp = false)
     {
-        return (currentNumber > previousNumber);
-    }
-
-    private bool IsCorrectNumber(int currentNumber, int previousNumber, bool increasing)
-    {
-        if (increasing != IsNumberIncreasing(currentNumber, previousNumber))
+        int numberOfSafeLevels = 0;
+        foreach (var line in lines)
         {
-            return false;
+            var numbers = line.Split(' ').Select(int.Parse).ToArray();
+            bool lineIsSafe = false;
+            
+            if (damp)
+            {
+                for (int i = 0; i < numbers.Length; i++)
+                {
+                    var dampedArray = numbers.Where( (value, index) => index != i).ToArray();
+                    bool currentIsSafe = IsLineSafe(dampedArray);
+
+                    if (currentIsSafe)
+                    {
+                        lineIsSafe = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                lineIsSafe = IsLineSafe(numbers);   
+            }
+
+            if (lineIsSafe) numberOfSafeLevels++;
         }
 
-        if (!IsNumberIncreaseCorrect(previousNumber, currentNumber))
-        {
-            return false;
-        }
-        return true;
+        return numberOfSafeLevels;
     }
-    
-    // TODO: Create a method to remove each element at a time for a given FAULTY line.
 
-    private bool IsSafeLine(string line, bool damp = false)
+    private bool IsLineSafe(int[] numbers, bool damp = false)
     {
-        var numbers = line.Split(' ').Select(int.Parse).ToArray();
-        bool isIncreasing = IsNumberIncreasing(numbers.Last(), numbers.First());
-        
-        bool isSafe = false;
+        bool isIncreasing = numbers.Last() > numbers.First();
+
         int previousNumber = 0;
-        bool usedDamp = false;
-        
         for (int i = 0; i < numbers.Length; i++)
         {
             var currentNumber = numbers[i];
-
             if (i == 0)
             {
                 previousNumber = currentNumber;
                 continue;
             }
 
-            if (!IsCorrectNumber(currentNumber, previousNumber, isIncreasing))
+            if (isIncreasing != (currentNumber > previousNumber))
             {
-                if (damp && !usedDamp)
-                {
-                    if (i == numbers.Length - 1)
-                    {
-                        isSafe = true;
-                        continue;
-                    }
-                    usedDamp = true;
-                    continue;
-                }
-
-                isSafe = false;
-                break;
+                return false;
             }
-            isSafe = true;
+
+            if (!IsNumberIncreaseCorrect(previousNumber, currentNumber))
+            {
+                return false;
+            }
+
             previousNumber = currentNumber;
         }
 
-        if (!isSafe) Console.WriteLine($"Problem: {line}");
-        return isSafe;
+        return true;
     }
 
     public override int RunPart1(string[] inputLines)
     {
-        int numberOfSafeLevels = 0;
-
-        foreach (var line in inputLines)
-        {
-            if (IsSafeLine(line)) numberOfSafeLevels += 1;
-        }
-
-        return numberOfSafeLevels;
+        return GetNumberOfSafeLine(inputLines, damp: false);
     }
 
     public override int RunPart2(string[] inputLines)
     {
-        int numberOfSafeLevels = 0;
-
-        foreach (var line in inputLines)
-        {
-            if (IsSafeLine(line, damp: true)) numberOfSafeLevels += 1;
-        }
-
-        return numberOfSafeLevels;
+        return GetNumberOfSafeLine(inputLines, damp: true);
     }
+
 }
