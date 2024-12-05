@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace AdventOfCode.Tests;
 
-internal class Day2Tests
+public class Day2Tests
 {
 
     [Test]

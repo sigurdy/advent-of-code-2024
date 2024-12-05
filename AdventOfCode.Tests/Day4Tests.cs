@@ -1,10 +1,9 @@
-﻿
-using AdventOfCode.Solutions.Day4;
+﻿using AdventOfCode.Solutions.Day4;
 using FluentAssertions;
 
 namespace AdventOfCode.Tests;
 
-class Day4Tests
+public class Day4Tests
 {
     [Test]
     public void TestPart1()
