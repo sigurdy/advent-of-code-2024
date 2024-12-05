@@ -30,159 +30,66 @@ public class Day4 : Solutions
         return matrix;
     }
 
-    private int CountNumberOfXmas(char[,] matrix)
+    private int CountMasOccurrences(char[,] matrix, char[] word)
     {
-        int edgeBuffer = "XMAS".Length - 1;
+        Position position = new Position(0, 0);
+
         int rows = matrix.GetLength(0) - 1;
         int cols = matrix.GetLength(1) - 1;
 
-        int xmasCount = 0;
+        int wordCount = 0;
         for (int i = 0; i <= rows; i++)
         {
             for (int j = 0; j <= cols; j++)
             {
-                if (matrix[i, j] != 'X') continue;
-                
-                // Check Horizontal
-                if (j <= cols - edgeBuffer)
-                {
-                    if (matrix[i, j] == 'X' && matrix[i, j + 1] == 'M' && matrix[i, j + 2] == 'A' && matrix[i, j + 3] == 'S')
-                    {
-                        xmasCount ++;
-                    }
-                }
+                position.UpdatePosition(i, j);
 
-                // Check Vertical Up
-                if (i >= edgeBuffer)
-                {
-                    if (matrix[i, j] == 'X' && matrix[i - 1, j] == 'M' && matrix[i - 2, j] == 'A' && matrix[i - 3, j] == 'S')
-                    {
-                        xmasCount ++;
-                    }
-                }
+                if (matrix[position.X, position.Y] != 'A') continue;
 
-                // Check Vertical Down
-                if (i <= rows - edgeBuffer)
-                {
-                    if (matrix[i, j] == 'X' && matrix[i + 1, j] == 'M' && matrix[i + 2, j] == 'A' && matrix[i + 3, j] == 'S')
-                    {
-                        xmasCount++;
-                    }
-                }
-
-                // Check Backwards
-                if (j >= edgeBuffer)
-                {
-                    if (matrix[i, j] == 'X' && matrix[i, j - 1] == 'M' && matrix[i, j - 2] == 'A' && matrix[i, j - 3] == 'S')
-                    {
-                        xmasCount++;
-                    }
-                }
-
-                xmasCount += CountXmasDiagonal(matrix, i, j);
+                wordCount += Helper.CheckForWordDiagonal(matrix, position, word);
             }
         }
 
-        return xmasCount;
+        return wordCount;
     }
 
-    private int CountXmasDiagonal(char[,] matrix, int rowIndex, int colIndex)
+    private int CountXmasOccurrences(char[,] matrix, char[] word)
     {
-        int xmasDiagonalCount = 0;
-
-        int edgeBuffer = "XMAS".Length - 1;
+        Position position = new Position(0, 0);
+        
         int rows = matrix.GetLength(0) - 1;
         int cols = matrix.GetLength(1) - 1;
 
-        // Check Down Right
-        if (rowIndex <= rows - edgeBuffer && colIndex <= cols - edgeBuffer )
-        {
-            if (matrix[rowIndex, colIndex] == 'X' && matrix[rowIndex + 1, colIndex + 1] == 'M' && matrix[rowIndex + 2, colIndex + 2] == 'A' && matrix[rowIndex + 3, colIndex + 3] == 'S')
-            {
-                xmasDiagonalCount++;
-            }
-        }
-
-        // Check Down Left
-        if (rowIndex <= rows - edgeBuffer && colIndex >= edgeBuffer)
-        {
-            if (matrix[rowIndex, colIndex] == 'X' && matrix[rowIndex + 1, colIndex - 1] == 'M' && matrix[rowIndex + 2, colIndex - 2] == 'A' && matrix[rowIndex + 3, colIndex - 3] == 'S')
-            {
-                xmasDiagonalCount++;
-            }
-        }
-
-        // Check Up Right
-        if (rowIndex >= edgeBuffer && colIndex <= cols - edgeBuffer)
-        {
-            if (matrix[rowIndex, colIndex] == 'X' && matrix[rowIndex - 1, colIndex + 1] == 'M' && matrix[rowIndex - 2, colIndex + 2] == 'A' && matrix[rowIndex - 3, colIndex + 3] == 'S')
-            {
-                xmasDiagonalCount++;
-            }
-        }
-
-        // Check Up Left
-        if (rowIndex >= edgeBuffer && colIndex >= edgeBuffer)
-        {
-            if (matrix[rowIndex, colIndex] == 'X' && matrix[rowIndex - 1, colIndex - 1] == 'M' && matrix[rowIndex - 2, colIndex - 2] == 'A' && matrix[rowIndex - 3, colIndex - 3] == 'S')
-            {
-                xmasDiagonalCount++;
-            }
-        }
-
-        return xmasDiagonalCount;
-    }
-
-    private int CountMas(char[,] matrix)
-    {
-        int buffer = 1;
-        int rows = matrix.GetLength(0) - 1;
-        int cols = matrix.GetLength(1) - 1;
-
-        int xmasCount = 0;
+        int wordCount = 0;
         for (int i = 0; i <= rows; i++)
         {
             for (int j = 0; j <= cols; j++)
             {
-                if (matrix[i, j] != 'A') continue;
-                
-                if (i < buffer || i > rows - buffer) continue;
-                if (j < buffer || j > rows - buffer) continue;
-                
-                if(CheckMasMatrix(matrix, i, j)) xmasCount++;
+                position.UpdatePosition(i, j);
+
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.N, word);
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.S, word);
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.E, word);
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.W, word);
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Ne, word);
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Nw, word);
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Se, word);
+                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Sw, word);
             }
         }
 
-        return xmasCount;
+        return wordCount;
     }
-
-    private bool CheckMasMatrix(char[,] matrix, int rowIndex, int colIndex)
-    {
-        int masCount = 0;
-        if (matrix[rowIndex - 1, colIndex - 1] == 'M' && matrix[rowIndex + 1, colIndex + 1] == 'S' || matrix[rowIndex - 1, colIndex - 1] == 'S' && matrix[rowIndex + 1, colIndex + 1] == 'M')
-        {
-            masCount++;
-        }
-        
-        if (matrix[rowIndex + 1, colIndex - 1] == 'M' && matrix[rowIndex - 1, colIndex + 1] == 'S' || matrix[rowIndex + 1, colIndex - 1] == 'S' && matrix[rowIndex - 1, colIndex + 1] == 'M')
-        {
-            masCount++;
-        }
-        
-        if (masCount == 2) return true;
-        return false;
-    }
-    
 
     public override int RunPart1(string[] inputLines)
     {
-        int count = CountNumberOfXmas(GenerateMatrix(inputLines));
+        int count = CountXmasOccurrences(GenerateMatrix(inputLines), ['X', 'M', 'A', 'S']);
         return count;
     }
 
     public override int RunPart2(string[] inputLines)
     {
-        int count = CountMas(GenerateMatrix(inputLines));
+        int count = CountMasOccurrences(GenerateMatrix(inputLines), ['M', 'S']);
         return count;
     }
 }

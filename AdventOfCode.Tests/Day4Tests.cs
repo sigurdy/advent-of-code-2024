@@ -5,6 +5,7 @@ namespace AdventOfCode.Tests;
 
 public class Day4Tests
 {
+
     [Test]
     public void TestPart1()
     {
