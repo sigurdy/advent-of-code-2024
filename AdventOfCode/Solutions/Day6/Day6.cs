@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Utils;
+﻿using System.Diagnostics;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode.Solutions.Day6;
 
@@ -10,8 +11,17 @@ public class Day6 : Solutions
 
     public override void Run()
     {
+        Stopwatch swPart1 = new Stopwatch();
+        Stopwatch swPart2 = new Stopwatch();
+        swPart1.Start();
         Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
+        swPart1.Stop();
+        Console.WriteLine($"Part 1 Time: {swPart1.ElapsedMilliseconds}");
+
+        swPart2.Start();
         Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
+        swPart2.Stop();
+        Console.WriteLine($"Part 2 Time: {swPart2.ElapsedMilliseconds}");
     }
 
     private Direction GetDirectionOfCarrot(char carrot)
@@ -77,56 +87,18 @@ public class Day6 : Solutions
         return count;
     }
 
-    private int NavigateMap(Map map)
-    {
-        Dictionary<Direction, (int, int)> directions = MatrixHelper.GetDirections();
-        
-        while (true)
-        {
-            // Current Position Settings
-            Position currentPosition = map.Position;
-            char currentCarrotSymbol = map.GetSymbolAtPosition(currentPosition);
-            Direction directionOfCarrot = GetDirectionOfCarrot(currentCarrotSymbol);
-
-            // Next Position Settings
-            Position nextPosition = new Position(currentPosition.X, currentPosition.Y);
-            nextPosition.IncrementPosition(directions[directionOfCarrot]);
-            char nextPositionSymbol = map.GetSymbolAtPosition(nextPosition);
-
-            // Update Map
-            if (nextPositionSymbol == '#')
-            {
-                Direction newDirection = RotateCarrot(directionOfCarrot);
-                map.UpdateMap(GetCarrotSymbolOfDirection(newDirection), currentPosition);
-                continue;
-            }
-
-            // Check if Complete
-            if (nextPositionSymbol == '?')
-            {
-                break;
-            }
-
-            map.UpdateMap('X', currentPosition);
-
-            map.IncrementPosition(directions[directionOfCarrot]);
-            map.UpdateMap(currentCarrotSymbol, currentPosition);
-        }
-        return CountNumberOfX(map) + 1;
-    }
-
-    private bool CheckIfLoop(Map map)
+    private bool NavigateMap(Map map)
     {
         Dictionary<Direction, (int, int)> directions = MatrixHelper.GetDirections();
 
         while (true)
         {
             // Current Position Settings
-            Position currentPosition = map.Position;
+            Position currentPosition = map.CarrotPosition;
             char currentCarrotSymbol = map.GetSymbolAtPosition(currentPosition);
             Direction directionOfCarrot = GetDirectionOfCarrot(currentCarrotSymbol);
             
-            // Check if Loop
+            // It is loop if the current block has been hit at the same direction
             if (map.UsedBlocks.Contains($"{currentPosition.X},{currentPosition.Y}{directionOfCarrot}")) return true;
 
             // Next Position Settings
@@ -139,17 +111,17 @@ public class Day6 : Solutions
             {
                 map.UsedBlocks.Add($"{currentPosition.X},{currentPosition.Y}{directionOfCarrot}");
                 Direction newDirection = RotateCarrot(directionOfCarrot);
-                map.UpdateMap(GetCarrotSymbolOfDirection(newDirection), currentPosition);
+                map.UpdateMapValueAtPosition(GetCarrotSymbolOfDirection(newDirection), currentPosition);
                 continue;
             }
 
             // Check if Out of Bounds
             if (nextPositionSymbol == '?') return false;
 
-            map.UpdateMap('X', currentPosition);
+            map.UpdateMapValueAtPosition('X', currentPosition);
 
             map.IncrementPosition(directions[directionOfCarrot]);
-            map.UpdateMap(currentCarrotSymbol, currentPosition);
+            map.UpdateMapValueAtPosition(currentCarrotSymbol, currentPosition);
         }
     }
 
@@ -158,36 +130,45 @@ public class Day6 : Solutions
         var mapMatrix = MatrixHelper.GenerateMatrix(inputLines);
         Map map = new Map(mapMatrix);
 
-        var count = NavigateMap(map);
-
-        return count;
+        bool isLoop = NavigateMap(map);
+        if (isLoop) throw new InvalidOperationException("The map is loop");
+        
+        var numberOfX = CountNumberOfX(map);
+        return numberOfX;
     }
 
     public override int RunPart2(string[] inputLines)
     {
-        var count = 0;
+        var numberOfLoops = 0;
         char[,] inputMatrix = MatrixHelper.GenerateMatrix(inputLines);
-        char[] carrotSymbols = { '<', '>', '^', 'V' };
-
-        Map map = new Map(MatrixHelper.GenerateMatrix(inputLines));
-        for (int i = 0; i < inputMatrix.GetLength(0); i++)
+        
+        // Find initial Path
+        Map initialMap = new Map((char[,])inputMatrix.Clone()); 
+        NavigateMap(initialMap);
+        
+        // Create copy to not edit the inputMatrix
+        Map map = new Map((char[,])inputMatrix.Clone());
+        for (int i = 0; i < map.MapMatrix.GetLength(0); i++)
         {
-            for (int j = 0; j < inputMatrix.GetLength(1); j++)
+            for (int j = 0; j < map.MapMatrix.GetLength(1); j++)
             {
                 Position currentPosition = new Position(i, j);
                 var currentPositionSymbol = map.GetSymbolAtPosition(currentPosition);
+                
+                // Skip if index is not in the path of the carrot
+                char charAtCurrentPosition = initialMap.GetSymbolAtPosition(currentPosition);
+                if (charAtCurrentPosition != 'X') continue;
+                
+                // Do not need to place block on startposition or already blocked placement
+                if (currentPositionSymbol == '#' || map.CarrotSymbols.Contains(currentPositionSymbol)) continue;
+                
+                map.UpdateMapValueAtPosition('O', currentPosition);
 
-                if (currentPositionSymbol == '#' || carrotSymbols.Contains(currentPositionSymbol)) continue;
-
-                map.BlockPosition = currentPosition;
-                map.UpdateMap('O', currentPosition);
-
-                bool isLoop = CheckIfLoop(map);
-                map.ResetMap(MatrixHelper.GenerateMatrix(inputLines));
-                if (isLoop) count++;
+                bool isLoop = NavigateMap(map);
+                map.ResetMap((char[,])inputMatrix.Clone());
+                if (isLoop) numberOfLoops++;
             }
         }
-
-        return count;
+        return numberOfLoops;
     }
 }
