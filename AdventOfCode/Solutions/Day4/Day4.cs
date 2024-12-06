@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Day4;
+﻿using AdventOfCode.Utils;
+
+namespace AdventOfCode.Solutions.Day4;
 
 public class Day4 : Solutions
 {
@@ -12,22 +14,53 @@ public class Day4 : Solutions
         Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
     }
 
-    private char[,] GenerateMatrix(string[] inputLines)
+    public static int CheckForWordDiagonal(char[,] matrix, Position position, char[] word)
     {
-        int rows = inputLines.Length;
-        int cols = inputLines[0].Length;
-
-        char[,] matrix = new char[rows, cols];
-
-        for (int i = 0; i < rows; i++)
+        int masCount = 0;
+        try
         {
-            for (int j = 0; j < cols; j++)
+            // Acending Diagonal
+            char[] swne = [matrix[position.X + 1, position.Y - 1], matrix[position.X - 1, position.Y + 1]];
+            if (word.All(x => swne.Contains(x)))
             {
-                matrix[i,j] = inputLines[i][j];
+                masCount++;
+            }
+
+            // Decending Diagonal
+            char[] nwse = [matrix[position.X - 1, position.Y - 1], matrix[position.X + 1, position.Y + 1]];
+            if (word.All(x => nwse.Contains(x)))
+            {
+                masCount++;
             }
         }
+        catch (IndexOutOfRangeException)
+        {
+            return 0;
+        }
+        if (masCount == 2) return 1;
 
-        return matrix;
+        return 0;
+    }
+
+    public static int CheckWordExistsInDirection(char[,] matrix, Position position, Direction direction, char[] word)
+    {
+        Dictionary<Direction, (int, int)> directions = MatrixHelper.GetDirections();
+
+        Position localPosition = new Position(position.X, position.Y);
+        for (int i = 0; i < word.Length; i++)
+        {
+            try
+            {
+                if (matrix[localPosition.X, localPosition.Y] != word[i]) return 0;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return 0;
+            }
+
+            localPosition.IncrementPosition(directions[direction]);
+        }
+        return 1;
     }
 
     private int CountMasOccurrences(char[,] matrix, char[] word)
@@ -46,7 +79,7 @@ public class Day4 : Solutions
 
                 if (matrix[position.X, position.Y] != 'A') continue;
 
-                wordCount += Helper.CheckForWordDiagonal(matrix, position, word);
+                wordCount += CheckForWordDiagonal(matrix, position, word);
             }
         }
 
@@ -67,14 +100,14 @@ public class Day4 : Solutions
             {
                 position.UpdatePosition(i, j);
 
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.N, word);
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.S, word);
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.E, word);
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.W, word);
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Ne, word);
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Nw, word);
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Se, word);
-                wordCount += Helper.CheckWordExistsInDirection(matrix, position, Direction.Sw, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.N, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.S, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.E, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.W, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.Ne, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.Nw, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.Se, word);
+                wordCount += CheckWordExistsInDirection(matrix, position, Direction.Sw, word);
             }
         }
 
@@ -83,13 +116,13 @@ public class Day4 : Solutions
 
     public override int RunPart1(string[] inputLines)
     {
-        int count = CountXmasOccurrences(GenerateMatrix(inputLines), ['X', 'M', 'A', 'S']);
+        int count = CountXmasOccurrences(MatrixHelper.GenerateMatrix(inputLines), ['X', 'M', 'A', 'S']);
         return count;
     }
 
     public override int RunPart2(string[] inputLines)
     {
-        int count = CountMasOccurrences(GenerateMatrix(inputLines), ['M', 'S']);
+        int count = CountMasOccurrences(MatrixHelper.GenerateMatrix(inputLines), ['M', 'S']);
         return count;
     }
 }
