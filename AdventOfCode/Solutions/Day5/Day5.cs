@@ -6,12 +6,6 @@ public class Day5 : Solutions
     {
     }
 
-    public override void Run()
-    {
-        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
-        Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
-    }
-
     private Dictionary<int, List<int>> GenerateDictionaryOfRules(string[] arrayOfRules)
     {
         Dictionary<int, List<int>> rules = new Dictionary<int, List<int>>();
@@ -115,7 +109,7 @@ public class Day5 : Solutions
         return newArray;
     }
 
-    public override int RunPart1(string[] inputLines)
+    public override long RunPart1(string[] inputLines)
     {
         var indexEmpty = Array.FindIndex(inputLines, string.IsNullOrEmpty);
 
@@ -135,7 +129,7 @@ public class Day5 : Solutions
         return sum;
     }
 
-    public override int RunPart2(string[] inputLines)
+    public override long RunPart2(string[] inputLines)
     {
         var indexEmpty = Array.FindIndex(inputLines, string.IsNullOrEmpty);
 

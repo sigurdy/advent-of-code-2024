@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using AdventOfCode.Utils;
+﻿using AdventOfCode.Utils;
 
 namespace AdventOfCode.Solutions.Day6;
 
@@ -7,21 +6,6 @@ public class Day6 : Solutions
 {
     public Day6() : base(6)
     {
-    }
-
-    public override void Run()
-    {
-        Stopwatch swPart1 = new Stopwatch();
-        Stopwatch swPart2 = new Stopwatch();
-        swPart1.Start();
-        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
-        swPart1.Stop();
-        Console.WriteLine($"Part 1 Time: {swPart1.ElapsedMilliseconds}");
-
-        swPart2.Start();
-        Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
-        swPart2.Stop();
-        Console.WriteLine($"Part 2 Time: {swPart2.ElapsedMilliseconds}");
     }
 
     private Direction GetDirectionOfCarrot(char carrot)
@@ -125,7 +109,7 @@ public class Day6 : Solutions
         }
     }
 
-    public override int RunPart1(string[] inputLines)
+    public override long RunPart1(string[] inputLines)
     {
         var mapMatrix = MatrixHelper.GenerateMatrix(inputLines);
         Map map = new Map(mapMatrix);
@@ -137,9 +121,9 @@ public class Day6 : Solutions
         return numberOfX;
     }
 
-    public override int RunPart2(string[] inputLines)
+    public override long RunPart2(string[] inputLines)
     {
-        var numberOfLoops = 0;
+        int numberOfLoops = 0;
         char[,] inputMatrix = MatrixHelper.GenerateMatrix(inputLines);
         
         // Find initial Path
@@ -159,7 +143,7 @@ public class Day6 : Solutions
                 char charAtCurrentPosition = initialMap.GetSymbolAtPosition(currentPosition);
                 if (charAtCurrentPosition != 'X') continue;
                 
-                // Do not need to place block on startposition or already blocked placement
+                // Do not need to place block on start position or already blocked placement
                 if (currentPositionSymbol == '#' || map.CarrotSymbols.Contains(currentPositionSymbol)) continue;
                 
                 map.UpdateMapValueAtPosition('O', currentPosition);

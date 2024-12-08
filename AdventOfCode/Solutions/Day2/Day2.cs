@@ -6,12 +6,6 @@ public class Day2 : Solutions
     {
     }
 
-    public override void Run()
-    {
-        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
-        Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
-    }
-
     private bool IsNumberIncreaseCorrect(int number1, int number2)
     {
         int distance = Math.Abs(number1 - number2);
@@ -83,12 +77,12 @@ public class Day2 : Solutions
         return true;
     }
 
-    public override int RunPart1(string[] inputLines)
+    public override long RunPart1(string[] inputLines)
     {
         return GetNumberOfSafeLine(inputLines, damp: false);
     }
 
-    public override int RunPart2(string[] inputLines)
+    public override long RunPart2(string[] inputLines)
     {
         return GetNumberOfSafeLine(inputLines, damp: true);
     }

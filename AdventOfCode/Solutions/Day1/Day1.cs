@@ -6,18 +6,12 @@ public class Day1 : Solutions
     {
     }
 
-    public override void Run()
-    {
-        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
-        Console.WriteLine($"Part 1: {RunPart2(InputLines)}");
-    }
-
     private int DistanceBetweenNumbers(int number1, int number2)
     {
         return Math.Abs(number1 - number2);
     }
 
-    public override int RunPart1(string[] inputLines)
+    public override long RunPart1(string[] inputLines)
     {
         int[] firstColumn = inputLines.Select(x => int.Parse(x.Split(" ").First())).ToArray();
         int[] lastColumn = inputLines.Select(x => int.Parse(x.Split(" ").Last())).ToArray();
@@ -35,7 +29,7 @@ public class Day1 : Solutions
         return sumOfDistances;
     }
 
-    public override int RunPart2(string[] inputLines)
+    public override long RunPart2(string[] inputLines)
     {
         int[] firstColumn = inputLines.Select(x => int.Parse(x.Split(" ").First())).ToArray();
         int[] lastColumn = inputLines.Select(x => int.Parse(x.Split(" ").Last())).ToArray();

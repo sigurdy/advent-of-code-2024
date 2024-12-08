@@ -8,12 +8,6 @@ public class Day4 : Solutions
     {
     }
 
-    public override void Run()
-    {
-        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
-        Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
-    }
-
     public static int CheckForWordDiagonal(char[,] matrix, Position position, char[] word)
     {
         int masCount = 0;
@@ -114,13 +108,13 @@ public class Day4 : Solutions
         return wordCount;
     }
 
-    public override int RunPart1(string[] inputLines)
+    public override long RunPart1(string[] inputLines)
     {
         int count = CountXmasOccurrences(MatrixHelper.GenerateMatrix(inputLines), ['X', 'M', 'A', 'S']);
         return count;
     }
 
-    public override int RunPart2(string[] inputLines)
+    public override long RunPart2(string[] inputLines)
     {
         int count = CountMasOccurrences(MatrixHelper.GenerateMatrix(inputLines), ['M', 'S']);
         return count;

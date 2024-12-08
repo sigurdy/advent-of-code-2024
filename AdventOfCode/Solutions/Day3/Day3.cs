@@ -8,12 +8,6 @@ public class Day3 : Solutions
     {
     }
 
-    public override void Run()
-    {
-        Console.WriteLine($"Part 1: {RunPart1(InputLines)}");
-        Console.WriteLine($"Part 2: {RunPart2(InputLines)}");
-    }
-
     private List<(int, int)> ExtractValidMults(string input)
     {
         var regExPatternOnlyMults = @"mul\(\d{1,3},\d{1,3}\)";
@@ -93,7 +87,7 @@ public class Day3 : Solutions
         return sum;
     }
 
-    public override int RunPart1(string[] inputLines)
+    public override long RunPart1(string[] inputLines)
     {
         string combinedString = string.Empty;
         foreach (var line in inputLines)
@@ -104,7 +98,7 @@ public class Day3 : Solutions
         return result;
     }
 
-    public override int RunPart2(string[] inputLines)
+    public override long RunPart2(string[] inputLines)
     {
         string combinedString = string.Empty;
         foreach (var line in inputLines)
