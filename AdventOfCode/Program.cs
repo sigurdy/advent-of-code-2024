@@ -5,11 +5,12 @@ using AdventOfCode.Solutions.Day3;
 using AdventOfCode.Solutions.Day4;
 using AdventOfCode.Solutions.Day5;
 using AdventOfCode.Solutions.Day6;
+using AdventOfCode.Solutions.Day7;
 
 while (true)
 {
     // Get all the solutions
-    Solutions[] solutions = { new Day1(), new Day2(), new Day3(), new Day4(), new Day5(), new Day6() };
+    Solutions[] solutions = { new Day1(), new Day2(), new Day3(), new Day4(), new Day5(), new Day6(), new Day7() };
     var possibleDays = solutions.Select(x => x.DayNumber).ToArray();
     
     // Get input from user
