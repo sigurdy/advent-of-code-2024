@@ -1,6 +1,4 @@
-﻿using AdventOfCode.Solutions.Day4;
-
-namespace AdventOfCode.Utils;
+﻿namespace AdventOfCode.Solutions.Day6.Utils;
 
 public static class MatrixHelper
 {

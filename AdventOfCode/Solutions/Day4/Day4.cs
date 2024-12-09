@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Utils;
+﻿using AdventOfCode.Solutions.Day6.Utils;
 
 namespace AdventOfCode.Solutions.Day4;
 

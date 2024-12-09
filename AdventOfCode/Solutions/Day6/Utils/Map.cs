@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Utils;
+﻿namespace AdventOfCode.Solutions.Day6.Utils;
 
 public class Map
 {
