@@ -6,7 +6,7 @@ public class Day9 : Solutions
     {
     }
 
-    private string PrintQueue(Queue<int[]> queue)
+    private string GenerateData(Queue<int[]> queue)
     {
         var output = string.Empty;
         foreach (var batch in queue)
@@ -14,15 +14,44 @@ public class Day9 : Solutions
             for (var j = 0; j < batch[1]; j++)
             {
                 output += batch[0];
-                Console.Write(batch[0]);
             }
 
             for (var j = 0; j < batch[2]; j++)
             {
                 output += ".";
-                Console.Write(".");
             }
         }
+
+        return output;
+    }
+
+    private string RemoveEmpty(string input)
+    {
+        string output = string.Empty;
+
+        int indexPointer = -1;
+        int numberPointer = input.Length - 1;
+        for (var i = 0; i < input.Length; i++)
+        {
+            indexPointer++;
+
+            var num1 = input[indexPointer];
+            var num2 = input[numberPointer];
+            if (indexPointer >= numberPointer - 1) break;
+
+            if (input[indexPointer] != '.')
+            {
+                output += input[indexPointer];
+                continue;
+            }
+
+            if (input[numberPointer] != '.')
+            {
+                output += input[numberPointer];
+                numberPointer--;
+            }
+        }
+
         return output;
     }
 
@@ -50,7 +79,7 @@ public class Day9 : Solutions
             }
 
             batch[1] = number;
-            
+
             // If last number add to queue
             if (i == input.Length - 1)
             {
@@ -66,7 +95,10 @@ public class Day9 : Solutions
     {
         var input = inputLines[0];
         var queue = GenerateQueue(input);
-        var output = PrintQueue(queue);
+        var rawData = GenerateData(queue);
+        Console.WriteLine(rawData);
+        var orderedData = RemoveEmpty(rawData);
+        Console.WriteLine(orderedData);
         return 0;
     }
 
