@@ -117,18 +117,18 @@ public class Day9 : Solutions
         return batches;
     }
 
-    private int CalculateChecksum(int[] data)
+    private long CalculateChecksum(int[] data)
     {
-        int sum = 0;
+        long sum = 0;
         for (int i = 0; i < data.Length; i++) 
         {
-            int id = i;
-            int currentNumber = data[i];
+            long id = i;
+            long currentNumber = data[i];
             if (currentNumber == -1)
             {
                 break;
             }
-            int localSum = id * currentNumber;
+            long localSum = id * currentNumber;
             sum += localSum;
         }
         return sum;

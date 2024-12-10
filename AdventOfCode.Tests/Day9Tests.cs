@@ -32,6 +32,6 @@ public class Day9Tests
         var result = sut.RunPart2(inputLines);
 
         // Assert
-        result.Should().Be(34);
+        result.Should().Be(2858);
     }
 }
