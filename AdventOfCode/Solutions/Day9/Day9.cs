@@ -6,74 +6,88 @@ public class Day9 : Solutions
     {
     }
 
-    private string GenerateData(Queue<int[]> queue)
+    private int[] FragmentData(List<int[]> batches)
     {
-        var output = string.Empty;
-        foreach (var batch in queue)
+        int[] output = [];
+        foreach (var batch in batches)
         {
+            int[] files = new int[batch[1]];
             for (var j = 0; j < batch[1]; j++)
             {
-                output += batch[0];
+                files[j]= batch[0];
             }
+            output = [.. output, .. files];
 
+            int[] empty = new int[batch[2]];
             for (var j = 0; j < batch[2]; j++)
             {
-                output += ".";
+                empty[j] = -1;
             }
+            output = [.. output, .. empty];
         }
 
         return output;
     }
 
-    private string RemoveEmpty(string input)
+    private void PrintArray(int[] array)
     {
-        string output = string.Empty;
-
-        int indexPointer = -1;
-        int numberPointer = input.Length - 1;
-        for (var i = 0; i < input.Length; i++)
+        foreach (var item in array)
         {
-            indexPointer++;
-
-            var num1 = input[indexPointer];
-            var num2 = input[numberPointer];
-            if (indexPointer >= numberPointer - 1)
+            if (item == -1)
             {
-                if (input[numberPointer] != '.')
-                {
-                    output += input[numberPointer];
-                }
-                break;
+                Console.Write(".");
             }
-
-            if (input[indexPointer] != '.')
+            else 
             {
-                output += input[indexPointer];
+                Console.Write(item.ToString());
+            }
+        }
+        Console.WriteLine();
+    }
+
+    private int[] Defragmentation(int[] array)
+    {
+        int[] output = (int[]) array.Clone();
+
+        int indexPointer = 0;
+        int numberPointer = array.Length - 1;
+
+        while(numberPointer > indexPointer)
+        {
+            // Swich indexes
+            if (output[indexPointer] == -1 && output[numberPointer] != -1)
+            {
+                int leftNumber = output[indexPointer];
+                int rightNumber = output[numberPointer];
+
+                output[indexPointer] = rightNumber;
+                output[numberPointer] = leftNumber;
+                
+                indexPointer++;
+                numberPointer--;
+
                 continue;
             }
 
-            if (input[numberPointer] != '.')
+            if (output[numberPointer] == -1)
             {
-                output += input[numberPointer];
                 numberPointer--;
             }
-
-            if (input[numberPointer] == '.')
+            if (output[indexPointer] != -1)
             {
-                numberPointer--;
+                indexPointer++;
             }
         }
 
         return output;
     }
 
-    private Queue<int[]> GenerateQueue(string input)
+    private List<int[]> GenerateBatches(string input)
     {
-        Queue<int[]> queue = new Queue<int[]>();
+        List<int[]> batches = new List<int[]>();
 
         int id = 0;
         int[] batch = new int[3];
-
         for (int i = 0; i < input.Length; i++)
         {
             int number = int.Parse(input[i].ToString());
@@ -83,7 +97,7 @@ public class Day9 : Solutions
             {
                 batch[0] = id;
                 batch[2] = number;
-                queue.Enqueue(batch);
+                batches.Add(batch);
                 batch = new int[3];
 
                 id++;
@@ -96,19 +110,23 @@ public class Day9 : Solutions
             if (i == input.Length - 1)
             {
                 batch[0] = id;
-                queue.Enqueue(batch);
+                batches.Add(batch);
             }
         }
 
-        return queue;
+        return batches;
     }
 
-    private int CalculateChecksum(string input)
+    private int CalculateChecksum(int[] data)
     {
         int sum = 0;
-        for (int i = 0; i < input.Length; i++) 
+        for (int i = 0; i < data.Length; i++) 
         {
-            int localSum = i * int.Parse(input[i].ToString());
+            if (data[i] == -1)
+            {
+                break;
+            }
+            int localSum = i * data[i];
             sum += localSum;
         }
         return sum;
@@ -116,13 +134,14 @@ public class Day9 : Solutions
 
     public override long RunPart1(string[] inputLines)
     {
-        var input = inputLines[0];
-        var queue = GenerateQueue(input);
-        var rawData = GenerateData(queue);
-        //Console.WriteLine(rawData);
-        var orderedData = RemoveEmpty(rawData);
-        //Console.WriteLine(orderedData);
-        var checksum = CalculateChecksum(orderedData);
+        string input = inputLines[0];
+        List<int[]> bactches = GenerateBatches(input);
+        int[] fragmentedData = FragmentData(bactches);
+        int[] defragmentedData = Defragmentation(fragmentedData);
+        PrintArray(fragmentedData);
+        PrintArray(defragmentedData);
+
+        var checksum = CalculateChecksum(defragmentedData);
         return checksum;
     }
 
