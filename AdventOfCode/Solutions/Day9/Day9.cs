@@ -81,6 +81,28 @@ public class Day9 : Solutions
 
         return output;
     }
+    
+    private int[] DefragmentationBlock(int[] array, List<int[]> batches)
+    {
+        int[] output = (int[]) array.Clone();
+        List<int[]> newBatches = new List<int[]>(batches);
+        
+        int indexPointer = batches.First()[0];
+        int numberPointer = batches.Last()[0];
+
+        int index = 0;
+        while(numberPointer > indexPointer)
+        {
+            var lastBatch = newBatches[numberPointer];
+            var replacableBatch = newBatches
+                .Where(x => x[2] >= lastBatch[1]) // the batch has enough free space
+                .OrderBy(x => x[0]) // select the IDs
+                .FirstOrDefault(); // get the smallest id
+            
+        }
+
+        return output;
+    }
 
     private List<int[]> GenerateBatches(string input)
     {
@@ -149,6 +171,10 @@ public class Day9 : Solutions
 
     public override long RunPart2(string[] inputLines)
     {
+        string input = inputLines[0];
+        List<int[]> bactches = GenerateBatches(input);
+        int[] fragmentedData = FragmentData(bactches);
+        int[] defragmentedData = DefragmentationBlock(fragmentedData, bactches);
         return 0;
     }
 }
