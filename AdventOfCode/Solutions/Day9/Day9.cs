@@ -37,7 +37,14 @@ public class Day9 : Solutions
 
             var num1 = input[indexPointer];
             var num2 = input[numberPointer];
-            if (indexPointer >= numberPointer - 1) break;
+            if (indexPointer >= numberPointer - 1)
+            {
+                if (input[numberPointer] != '.')
+                {
+                    output += input[numberPointer];
+                }
+                break;
+            }
 
             if (input[indexPointer] != '.')
             {
@@ -48,6 +55,11 @@ public class Day9 : Solutions
             if (input[numberPointer] != '.')
             {
                 output += input[numberPointer];
+                numberPointer--;
+            }
+
+            if (input[numberPointer] == '.')
+            {
                 numberPointer--;
             }
         }
@@ -91,15 +103,27 @@ public class Day9 : Solutions
         return queue;
     }
 
+    private int CalculateChecksum(string input)
+    {
+        int sum = 0;
+        for (int i = 0; i < input.Length; i++) 
+        {
+            int localSum = i * int.Parse(input[i].ToString());
+            sum += localSum;
+        }
+        return sum;
+    }
+
     public override long RunPart1(string[] inputLines)
     {
         var input = inputLines[0];
         var queue = GenerateQueue(input);
         var rawData = GenerateData(queue);
-        Console.WriteLine(rawData);
+        //Console.WriteLine(rawData);
         var orderedData = RemoveEmpty(rawData);
-        Console.WriteLine(orderedData);
-        return 0;
+        //Console.WriteLine(orderedData);
+        var checksum = CalculateChecksum(orderedData);
+        return checksum;
     }
 
     public override long RunPart2(string[] inputLines)
