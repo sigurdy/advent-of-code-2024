@@ -122,11 +122,13 @@ public class Day9 : Solutions
         int sum = 0;
         for (int i = 0; i < data.Length; i++) 
         {
-            if (data[i] == -1)
+            int id = i;
+            int currentNumber = data[i];
+            if (currentNumber == -1)
             {
                 break;
             }
-            int localSum = i * data[i];
+            int localSum = id * currentNumber;
             sum += localSum;
         }
         return sum;
@@ -138,8 +140,8 @@ public class Day9 : Solutions
         List<int[]> bactches = GenerateBatches(input);
         int[] fragmentedData = FragmentData(bactches);
         int[] defragmentedData = Defragmentation(fragmentedData);
-        PrintArray(fragmentedData);
-        PrintArray(defragmentedData);
+        //PrintArray(fragmentedData);
+        //PrintArray(defragmentedData);
 
         var checksum = CalculateChecksum(defragmentedData);
         return checksum;
