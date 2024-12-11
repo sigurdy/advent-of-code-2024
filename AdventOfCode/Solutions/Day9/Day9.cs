@@ -6,30 +6,7 @@ public class Day9 : Solutions
     {
     }
 
-    private int[] FragmentData(List<int[]> batches)
-    {
-        int[] output = [];
-        foreach (var batch in batches)
-        {
-            int[] files = new int[batch[1]];
-            for (var j = 0; j < batch[1]; j++)
-            {
-                files[j]= batch[0];
-            }
-            output = [.. output, .. files];
-
-            int[] empty = new int[batch[2]];
-            for (var j = 0; j < batch[2]; j++)
-            {
-                empty[j] = -1;
-            }
-            output = [.. output, .. empty];
-        }
-
-        return output;
-    }
-
-    private void PrintArray(int[] array)
+    private void PrintData(List<int> array)
     {
         foreach (var item in array)
         {
@@ -37,12 +14,23 @@ public class Day9 : Solutions
             {
                 Console.Write(".");
             }
-            else 
+            else
             {
                 Console.Write(item.ToString());
             }
         }
         Console.WriteLine();
+    }
+
+    private List<int> FragmentData(List<Batch> batches)
+    {
+        List<int> output = new List<int>();
+        foreach (var batch in batches)
+        {
+            output.AddRange(batch.Numbers);
+        }
+
+        return output;
     }
 
     private int[] Defragmentation(int[] array)
@@ -104,36 +92,26 @@ public class Day9 : Solutions
         return output;
     }
 
-    private List<int[]> GenerateBatches(string input)
+    private List<Batch> GenerateBatches(string input)
     {
-        List<int[]> batches = new List<int[]>();
+        List<Batch> batches = new List<Batch>();
 
         int id = 0;
-        int[] batch = new int[3];
-        for (int i = 0; i < input.Length; i++)
+        for (int i = 0; i < input.Length; i += 2)
         {
-            int number = int.Parse(input[i].ToString());
-
-            // Even number, i.e., the free space
-            if (i % 2 != 0)
+            int files = int.Parse(input[i].ToString());
+            if (i+1 >= input.Length)
             {
-                batch[0] = id;
-                batch[2] = number;
-                batches.Add(batch);
-                batch = new int[3];
-
-                id++;
-                continue;
+                int[] lastNumber = [.. Enumerable.Repeat(id, files).ToArray()];
+                batches.Add(new Batch(id, lastNumber));
+                break;
             }
+            int free = int.Parse(input[i+1].ToString());
 
-            batch[1] = number;
+            int[] numbers = [ .. Enumerable.Repeat(id, files).ToArray(), .. Enumerable.Repeat(-1, free).ToArray() ];
 
-            // If last number add to queue
-            if (i == input.Length - 1)
-            {
-                batch[0] = id;
-                batches.Add(batch);
-            }
+            batches.Add( new Batch(id, numbers) );
+            id++;
         }
 
         return batches;
@@ -159,22 +137,41 @@ public class Day9 : Solutions
     public override long RunPart1(string[] inputLines)
     {
         string input = inputLines[0];
-        List<int[]> bactches = GenerateBatches(input);
-        int[] fragmentedData = FragmentData(bactches);
-        int[] defragmentedData = Defragmentation(fragmentedData);
-        //PrintArray(fragmentedData);
+        List<Batch> bactches = GenerateBatches(input);
+        List<int> fragmentedData = FragmentData(bactches);
+        List<int> defragmentedData = Defragmentation(fragmentedData);
+        PrintData(fragmentedData);
         //PrintArray(defragmentedData);
 
-        var checksum = CalculateChecksum(defragmentedData);
-        return checksum;
+        //var checksum = CalculateChecksum(defragmentedData);
+        return 0;
     }
 
     public override long RunPart2(string[] inputLines)
     {
-        string input = inputLines[0];
-        List<int[]> bactches = GenerateBatches(input);
-        int[] fragmentedData = FragmentData(bactches);
-        int[] defragmentedData = DefragmentationBlock(fragmentedData, bactches);
+        //string input = inputLines[0];
+        //List<Batch> bactches = GenerateBatches(input);
+        //int[] fragmentedData = FragmentData(bactches);
+        //int[] defragmentedData = DefragmentationBlock(fragmentedData, bactches);
         return 0;
+    }
+}
+
+public class Batch
+{
+    public int Id { get; }
+    public int FreeSpace { get; }
+    public int[] Numbers { get; }
+
+    public Batch(int id, int[] numbers)
+    {
+        Id = id;
+        Numbers = numbers;
+        FreeSpace = numbers.Count(x => x == -1);
+    }
+
+    public void UpdateBatch(int[] numbers)
+    {
+
     }
 }
