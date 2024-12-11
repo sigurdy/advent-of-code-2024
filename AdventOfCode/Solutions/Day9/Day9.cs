@@ -33,12 +33,12 @@ public class Day9 : Solutions
         return output;
     }
 
-    private int[] Defragmentation(int[] array)
+    private List<int> DefragmentationPart1(List<int> array)
     {
-        int[] output = (int[]) array.Clone();
+        List<int> output = new List<int>(array);
 
         int indexPointer = 0;
-        int numberPointer = array.Length - 1;
+        int numberPointer = array.Count - 1;
 
         while(numberPointer > indexPointer)
         {
@@ -70,26 +70,29 @@ public class Day9 : Solutions
         return output;
     }
     
-    private int[] DefragmentationBlock(int[] array, List<int[]> batches)
+    private List<Batch> DefragmentationPart2(List<Batch> batches)
     {
-        int[] output = (int[]) array.Clone();
-        List<int[]> newBatches = new List<int[]>(batches);
+        List<Batch> newBatches = new List<Batch>(batches);
         
-        int indexPointer = batches.First()[0];
-        int numberPointer = batches.Last()[0];
+        int batchIdToAdd = batches.First().Id;
+        int batchIdToMove = batches.Last().Id;
 
-        int index = 0;
-        while(numberPointer > indexPointer)
+        while(batchIdToMove > batchIdToAdd)
         {
-            var lastBatch = newBatches[numberPointer];
-            var replacableBatch = newBatches
-                .Where(x => x[2] >= lastBatch[1]) // the batch has enough free space
-                .OrderBy(x => x[0]) // select the IDs
-                .FirstOrDefault(); // get the smallest id
-            
+            Batch lastMovableBatch = newBatches.Where(x => x.Id == batchIdToMove).First();
+            Batch? replacableBatch = newBatches
+                .Where(x => x.FreeSpace >= lastMovableBatch.Files) // the batch has enough free space
+                .OrderBy(x => x.Id) // select the IDs; 
+                .FirstOrDefault();// get the smallest id
+            if(replacableBatch == null)
+            {
+                batchIdToAdd++;
+                continue;
+            }
+
         }
 
-        return output;
+        return newBatches;
     }
 
     private List<Batch> GenerateBatches(string input)
@@ -117,10 +120,10 @@ public class Day9 : Solutions
         return batches;
     }
 
-    private long CalculateChecksum(int[] data)
+    private long CalculateChecksum(List<int> data)
     {
         long sum = 0;
-        for (int i = 0; i < data.Length; i++) 
+        for (int i = 0; i < data.Count; i++) 
         {
             long id = i;
             long currentNumber = data[i];
@@ -139,20 +142,20 @@ public class Day9 : Solutions
         string input = inputLines[0];
         List<Batch> bactches = GenerateBatches(input);
         List<int> fragmentedData = FragmentData(bactches);
-        List<int> defragmentedData = Defragmentation(fragmentedData);
-        PrintData(fragmentedData);
-        //PrintArray(defragmentedData);
+        List<int> defragmentedData = DefragmentationPart1(fragmentedData);
+        //PrintData(fragmentedData);
+        //PrintData(defragmentedData);
 
-        //var checksum = CalculateChecksum(defragmentedData);
-        return 0;
+        var checksum = CalculateChecksum(defragmentedData);
+        return checksum;
     }
 
     public override long RunPart2(string[] inputLines)
     {
-        //string input = inputLines[0];
-        //List<Batch> bactches = GenerateBatches(input);
-        //int[] fragmentedData = FragmentData(bactches);
-        //int[] defragmentedData = DefragmentationBlock(fragmentedData, bactches);
+        string input = inputLines[0];
+        List<Batch> bactches = GenerateBatches(input);
+        List<int> fragmentedData = FragmentData(bactches);
+        List<int> defragmentedData = DefragmentationPart2(bactches);
         return 0;
     }
 }
@@ -161,6 +164,7 @@ public class Batch
 {
     public int Id { get; }
     public int FreeSpace { get; }
+    public int Files { get; }
     public int[] Numbers { get; }
 
     public Batch(int id, int[] numbers)
@@ -168,6 +172,7 @@ public class Batch
         Id = id;
         Numbers = numbers;
         FreeSpace = numbers.Count(x => x == -1);
+        Files = numbers.Count(x => x != -1);
     }
 
     public void UpdateBatch(int[] numbers)
