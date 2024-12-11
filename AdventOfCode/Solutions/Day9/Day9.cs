@@ -84,9 +84,10 @@ public class Day9 : Solutions
 
     private List<Batch> DefragmentationPart2(List<Batch> batches)
     {
+        List<Batch> originalBatches = batches.Select( x => new Batch(x.Id, x.Numbers)).ToList();
         List<Batch> newBatches = batches.Select( x => new Batch(x.Id, x.Numbers)).ToList();
-        newBatches.Reverse();
-        foreach (var batch in newBatches)
+        originalBatches.Reverse();
+        foreach (var batch in originalBatches)
         {
             Batch? replacableBatch = newBatches
                 .Where(x => x.FreeSpace >= batch.Files.Length) // the batch has enough free space
@@ -113,10 +114,8 @@ public class Day9 : Solutions
 
             replacableBatch.InsertNumbers(batch.Files);
             Batch updateCurrentBatch = newBatches.First(x => x.Id == batch.Id);
-            updateCurrentBatch.UpdateNumbers(Enumerable.Repeat(-1, batch.Numbers.Length).ToArray());
+            updateCurrentBatch.Reset();
         }
-
-        newBatches.Reverse();
         return newBatches;
     }
 
@@ -155,7 +154,7 @@ public class Day9 : Solutions
             long currentNumber = data[i];
             if (currentNumber == -1)
             {
-                break;
+                continue;
             }
 
             long localSum = id * currentNumber;
@@ -173,9 +172,23 @@ public class Day9 : Solutions
         List<int> defragmentedData = DefragmentationPart1(fragmentedData);
         //PrintData(fragmentedData);
         //PrintData(defragmentedData);
-
+        PrintData(defragmentedData);
         var checksum = CalculateChecksum(defragmentedData);
         return checksum;
+    }
+
+    private List<int> ConvertBatchToIntArray(List<Batch> batches)
+    {
+        List<int> output = new List<int>();
+        foreach (var batch in batches)
+        {
+            foreach (var number in batch.Numbers)
+            {
+                output.Add(number);
+            }
+        }
+
+        return output;
     }
 
     public override long RunPart2(string[] inputLines)
@@ -183,9 +196,10 @@ public class Day9 : Solutions
         string input = inputLines[0];
         List<Batch> batches = GenerateBatches(input);
         List<Batch> defragmentedData = DefragmentationPart2(batches);
-        PrintAllBatches(defragmentedData);
+        List<int> numbers = ConvertBatchToIntArray(defragmentedData);
+        var checksum = CalculateChecksum(numbers);
 
-        return 0;
+        return checksum;
     }
 }
 
@@ -219,9 +233,9 @@ public class Batch
         }
     }
 
-    public void UpdateNumbers(int[] numbers)
+    public void Reset()
     {
-        Numbers = numbers;
+        Numbers = Numbers.Select(x => x == Id ? -1 : x).ToArray();
         FreeSpace = GetFreeSpace();
         Files = GetFiles();
     }
