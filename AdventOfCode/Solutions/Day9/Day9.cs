@@ -19,15 +19,17 @@ public class Day9 : Solutions
                 Console.Write(item.ToString());
             }
         }
+
         Console.WriteLine();
     }
-    
+
     private void PrintAllBatches(List<Batch> batches)
     {
         foreach (var batch in batches)
         {
             batch.PrintBatch();
         }
+
         Console.WriteLine();
     }
 
@@ -82,28 +84,39 @@ public class Day9 : Solutions
 
     private List<Batch> DefragmentationPart2(List<Batch> batches)
     {
-        List<Batch> newBatches = new List<Batch>(batches);
-
-        Batch sourceBatch = newBatches.Last();
-        while (sourceBatch.Id > 0)
+        List<Batch> newBatches = batches.Select( x => new Batch(x.Id, x.Numbers)).ToList();
+        newBatches.Reverse();
+        foreach (var batch in newBatches)
         {
             Batch? replacableBatch = newBatches
-                .Where(x => x.FreeSpace >= sourceBatch.Files.Length) // the batch has enough free space
+                .Where(x => x.FreeSpace >= batch.Files.Length) // the batch has enough free space
                 .OrderBy(x => x.Id) // order by id 
                 .FirstOrDefault(); // get the smallest id
+            
+            if (replacableBatch != null && replacableBatch.Numbers.All(x => x == -1)) continue;
+
+            // break when finisehed
+            if (replacableBatch != null && replacableBatch.Numbers.Any(x => x != -1) && batch.Id <= replacableBatch.Id)
+            {
+                break;
+            }
+            
             if (replacableBatch == null)
             {
-                var nextBatch = newBatches.FirstOrDefault(x => x.Id == sourceBatch.Id - 1);
-                if (nextBatch == null) break;
-                sourceBatch = nextBatch;
+                var nextBatch = newBatches.FirstOrDefault(x => x.Id == batch.Id - 1);
+                if (nextBatch == null)
+                {
+                    break;
+                }
                 continue;
             }
 
-            replacableBatch.InsertNumbers(sourceBatch.Files);
-            newBatches.Remove(sourceBatch);
-            sourceBatch = newBatches.Last();
+            replacableBatch.InsertNumbers(batch.Files);
+            Batch updateCurrentBatch = newBatches.First(x => x.Id == batch.Id);
+            updateCurrentBatch.UpdateNumbers(Enumerable.Repeat(-1, batch.Numbers.Length).ToArray());
         }
 
+        newBatches.Reverse();
         return newBatches;
     }
 
@@ -171,7 +184,7 @@ public class Day9 : Solutions
         List<Batch> batches = GenerateBatches(input);
         List<Batch> defragmentedData = DefragmentationPart2(batches);
         PrintAllBatches(defragmentedData);
-        
+
         return 0;
     }
 }
@@ -206,7 +219,7 @@ public class Batch
         }
     }
 
-    public void UpdateBatch(int[] numbers)
+    public void UpdateNumbers(int[] numbers)
     {
         Numbers = numbers;
         FreeSpace = GetFreeSpace();
@@ -226,11 +239,12 @@ public class Batch
                 {
                     continue;
                 }
+
                 newNumbers[j] = numbers[i];
                 break;
             }
         }
-        
+
         Numbers = newNumbers;
         FreeSpace = GetFreeSpace();
         Files = GetFiles();
@@ -240,6 +254,7 @@ public class Batch
     {
         return Numbers.Count(x => x == -1);
     }
+
     private int[] GetFiles()
     {
         return Numbers.Where(x => x != -1).ToArray();
